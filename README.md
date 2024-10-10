@@ -1,3 +1,8 @@
+> [!NOTE]
+> Changes in fork:
+>
+> -   Using [unpdf](https://github.com/unjs/unpdf) instead of [pdfjs-dist](https://www.npmjs.com/package/pdfjs-dist).
+
 # pdf2array
 
 [![Tests](https://github.com/tonyroberts/pdf2array/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/tonyroberts/pdf2array/actions/workflows/tests.yml)
