@@ -11,6 +11,7 @@
         -   [stripFooters(rows, options)](#stripfootersrows-options)
         -   [stripSuperscript(rows, options)](#stripsuperscriptrows-options)
         -   [applySlice(rows, options)](#applyslicerows-options)
+        -   [rowsToStrings(rows)](#rowstostringsrows)
         -   [Other types](#other-types)
             -   [Pdf2ArrayOptions](#pdf2arrayoptions)
             -   [GetRowsOptions](#getrowsoptions)
@@ -37,7 +38,7 @@ For example usage see the [online demo](https://tonyroberts.github.io/pdf2array/
 
 ### pdf2array(data, options)
 
-Main function.
+Main function. Calls [getRows](#getrowsdata-options), any filters ([stripFooters](#stripfootersrows-options)/[stripSuperscript](#stripsuperscriptrows-options)/[applySlice](#applyslicerows-options)), then [rowsToStrings](#rowstostringsrows).
 
 ```ts
 async function pdf2array(
@@ -67,10 +68,11 @@ async function getRows(
 Example:
 
 ```ts
-import { getRows } from 'pdf2array';
+import { getRows, rowsToStrings } from 'pdf2array';
 
 const file = /* fs.readFileSync(..., 'utf8') or File() */;
-const rows = await getRows(file); // [[], [], [], ...];
+const rows = await getRows(file);
+const data = rowsToStrings(rows);
 ```
 
 ### stripFooters(rows, options)
@@ -82,11 +84,12 @@ function stripFooters(rows: Row[], options?: StripFootersOptions): Row[];
 Example:
 
 ```ts
-import { getRows, stripFooters } from 'pdf2array';
+import { getRows, stripFooters, rowsToStrings } from 'pdf2array';
 
 const file = /* fs.readFileSync(..., 'utf8') or File() */;
 let rows = await getRows(file);
 rows = stripFooters(rows);
+const data = rowsToStrings(rows);
 ```
 
 ### stripSuperscript(rows, options)
@@ -98,11 +101,12 @@ function stripSuperscript(rows: Row[], options?: StripSuperscriptOptions): Row[]
 Example:
 
 ```ts
-import { getRows, stripSuperscript } from 'pdf2array';
+import { getRows, stripSuperscript, rowsToStrings } from 'pdf2array';
 
 const file = /* fs.readFileSync(..., 'utf8') or File() */;
 let rows = await getRows(file);
 rows = stripSuperscript(rows);
+const data = rowsToStrings(rows);
 ```
 
 ### applySlice(rows, options)
@@ -114,11 +118,30 @@ function applySlice(rows: Row[], options?: ApplySliceOptions): Row[];
 Example:
 
 ```ts
-import { getRows, applySlice } from 'pdf2array';
+import { getRows, applySlice, rowsToStrings } from 'pdf2array';
 
 const file = /* fs.readFileSync(..., 'utf8') or File() */;
 let rows = await getRows(file);
 rows = applySlice(rows);
+const data = rowsToStrings(rows);
+```
+
+### rowsToStrings(rows)
+
+Maps the [Row](#row) items to strings (More specifically, the `str` property from [TextItem](https://mozilla.github.io/pdf.js/api/draft/module-pdfjsLib.html#~TextItem)-s).
+
+```ts
+function rowsToStrings(rows: Row[]): string[][];
+```
+
+Example:
+
+```ts
+import { getRows, rowsToStrings } from 'pdf2array';
+
+const file = /* fs.readFileSync(..., 'utf8') or File() */;
+let rows = await getRows(file);
+const data = rowsToStrings(rows);
 ```
 
 ### Other types
