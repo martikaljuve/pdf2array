@@ -54,7 +54,7 @@ Example:
 ```ts
 import pdf2array from 'pdf2array';
 
-const file = /* fs.readFileSync(..., 'utf8') or File() */;
+const file = /* fs.readFileSync(...) or File() */;
 const data = await pdf2array(file);
 ```
 
@@ -74,7 +74,7 @@ Example:
 ```ts
 import { getRows, rowsToStrings } from 'pdf2array';
 
-const file = /* fs.readFileSync(..., 'utf8') or File() */;
+const file = /* fs.readFileSync(...) or File() */;
 const rows = await getRows(file);
 const data = rowsToStrings(rows);
 ```
@@ -92,7 +92,7 @@ Example:
 ```ts
 import { getRows, stripFooters, rowsToStrings } from 'pdf2array';
 
-const file = /* fs.readFileSync(..., 'utf8') or File() */;
+const file = /* fs.readFileSync(...) or File() */;
 let rows = await getRows(file);
 rows = stripFooters(rows);
 const data = rowsToStrings(rows);
@@ -111,7 +111,7 @@ Example:
 ```ts
 import { getRows, stripSuperscript, rowsToStrings } from 'pdf2array';
 
-const file = /* fs.readFileSync(..., 'utf8') or File() */;
+const file = /* fs.readFileSync(...) or File() */;
 let rows = await getRows(file);
 rows = stripSuperscript(rows);
 const data = rowsToStrings(rows);
@@ -130,7 +130,7 @@ Example:
 ```ts
 import { getRows, applySlice, rowsToStrings } from 'pdf2array';
 
-const file = /* fs.readFileSync(..., 'utf8') or File() */;
+const file = /* fs.readFileSync(...) or File() */;
 let rows = await getRows(file);
 rows = applySlice(rows);
 const data = rowsToStrings(rows);
@@ -149,7 +149,7 @@ Example:
 ```ts
 import { getRows, rowsToStrings } from 'pdf2array';
 
-const file = /* fs.readFileSync(..., 'utf8') or File() */;
+const file = /* fs.readFileSync(...) or File() */;
 let rows = await getRows(file);
 const data = rowsToStrings(rows);
 ```
