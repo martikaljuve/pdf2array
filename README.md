@@ -12,8 +12,8 @@
         -   [stripSuperscript(rows, options)](#stripsuperscriptrows-options)
         -   [applySlice(rows, options)](#applyslicerows-options)
         -   [Other types](#other-types)
-            -   [GetRowsOptions](#getrowsoptions)
             -   [Pdf2ArrayOptions](#pdf2arrayoptions)
+            -   [GetRowsOptions](#getrowsoptions)
             -   [StripFootersOptions](#stripfootersoptions)
             -   [StripSuperscriptOptions](#stripsuperscriptoptions)
             -   [ApplySliceOptions](#applysliceoptions)
@@ -70,7 +70,7 @@ Example:
 import { getRows } from 'pdf2array';
 
 const file = /* fs.readFileSync(..., 'utf8') or File() */;
-const data = getRows(file); // [[], [], [], ...];
+const rows = await getRows(file); // [[], [], [], ...];
 ```
 
 ### stripFooters(rows, options)
@@ -79,10 +79,30 @@ const data = getRows(file); // [[], [], [], ...];
 function stripFooters(rows: Row[], options?: StripFootersOptions): Row[];
 ```
 
+Example:
+
+```ts
+import { getRows, stripFooters } from 'pdf2array';
+
+const file = /* fs.readFileSync(..., 'utf8') or File() */;
+let rows = await getRows(file);
+rows = stripFooters(rows);
+```
+
 ### stripSuperscript(rows, options)
 
 ```ts
 function stripSuperscript(rows: Row[], options?: StripSuperscriptOptions): Row[];
+```
+
+Example:
+
+```ts
+import { getRows, stripSuperscript } from 'pdf2array';
+
+const file = /* fs.readFileSync(..., 'utf8') or File() */;
+let rows = await getRows(file);
+rows = stripSuperscript(rows);
 ```
 
 ### applySlice(rows, options)
@@ -91,15 +111,17 @@ function stripSuperscript(rows: Row[], options?: StripSuperscriptOptions): Row[]
 function applySlice(rows: Row[], options?: ApplySliceOptions): Row[];
 ```
 
-### Other types
-
-#### GetRowsOptions
+Example:
 
 ```ts
-interface GetRowsOptions {
-	pages?: number[];
-}
+import { getRows, applySlice } from 'pdf2array';
+
+const file = /* fs.readFileSync(..., 'utf8') or File() */;
+let rows = await getRows(file);
+rows = applySlice(rows);
 ```
+
+### Other types
 
 #### Pdf2ArrayOptions
 
@@ -109,6 +131,14 @@ interface Pdf2ArrayOptions {
 	stripFooters?: boolean | StripFootersOptions;
 	stripSuperscript?: boolean | StripSuperscriptOptions;
 	slice?: boolean | SliceOptions;
+}
+```
+
+#### GetRowsOptions
+
+```ts
+interface GetRowsOptions {
+	pages?: number[];
 }
 ```
 

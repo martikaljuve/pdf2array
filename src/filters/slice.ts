@@ -167,7 +167,7 @@ export function applySlice(rows: Row[], options?: ApplySliceOptions) {
 
 	// Apply slice to each page independently
 	return pages.reduce((prev, { rows }) => {
-		const sliced = _applyVerticalSliceToPage(rows);
+		const sliced = _applyVerticalSliceToPage(rows, options);
 		return prev.concat(sliced);
 	}, [] as Row[]);
 }
