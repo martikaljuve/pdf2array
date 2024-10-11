@@ -40,6 +40,8 @@ For example usage see the [online demo](https://tonyroberts.github.io/pdf2array/
 
 Main function. Calls [getRows](#getrowsdata-options), any filters ([stripFooters](#stripfootersrows-options)/[stripSuperscript](#stripsuperscriptrows-options)/[applySlice](#applyslicerows-options)), then [rowsToStrings](#rowstostringsrows).
 
+Options: [Pdf2ArrayOptions](#pdf2arrayoptions).
+
 ```ts
 async function pdf2array(
 	data: string | number[] | ArrayBuffer | TypedArray | undefined,
@@ -57,6 +59,8 @@ const data = await pdf2array(file);
 ```
 
 ### getRows(data, options)
+
+Options: [GetRowsOptions](#getrowsoptions).
 
 ```ts
 async function getRows(
@@ -77,6 +81,8 @@ const data = rowsToStrings(rows);
 
 ### stripFooters(rows, options)
 
+Options: [StripFootersOptions](#stripfootersoptions).
+
 ```ts
 function stripFooters(rows: Row[], options?: StripFootersOptions): Row[];
 ```
@@ -94,6 +100,8 @@ const data = rowsToStrings(rows);
 
 ### stripSuperscript(rows, options)
 
+Options: [StripSuperscriptOptions](#stripsuperscriptoptions).
+
 ```ts
 function stripSuperscript(rows: Row[], options?: StripSuperscriptOptions): Row[];
 ```
@@ -110,6 +118,8 @@ const data = rowsToStrings(rows);
 ```
 
 ### applySlice(rows, options)
+
+Options: [ApplySliceOptions](#applysliceoptions).
 
 ```ts
 function applySlice(rows: Row[], options?: ApplySliceOptions): Row[];
