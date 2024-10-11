@@ -1,10 +1,13 @@
 import { Row, TextItemWithPosition } from '../pdf2array';
 
-export interface SliceOptions {
+export interface ApplySliceOptions {
+	/**
+	 * Defaults to 1024.
+	 */
 	verticalSlices?: number;
 }
 
-const DefaultSliceOptions: SliceOptions = {
+const DefaultSliceOptions: ApplySliceOptions = {
 	verticalSlices: 1024,
 };
 
@@ -34,7 +37,7 @@ function _findLocalMinima(values: number[]) {
 	return result;
 }
 
-function _applyVerticalSliceToPage(rows: Row[], options?: SliceOptions) {
+function _applyVerticalSliceToPage(rows: Row[], options?: ApplySliceOptions) {
 	/*
 	 * Quantize and count the frequency of bounding boxes.
 	 *
@@ -147,7 +150,7 @@ function _applyVerticalSliceToPage(rows: Row[], options?: SliceOptions) {
  * @param rows
  * @param options
  */
-export function applySlice(rows: Row[], options?: SliceOptions) {
+export function applySlice(rows: Row[], options?: ApplySliceOptions) {
 	// Split the rows into pages
 	const pages: { page: number; rows: Row[] }[] = rows.reduce(
 		(prev, row) => {
@@ -166,5 +169,5 @@ export function applySlice(rows: Row[], options?: SliceOptions) {
 	return pages.reduce((prev, { rows }) => {
 		const sliced = _applyVerticalSliceToPage(rows);
 		return prev.concat(sliced);
-	}, []);
+	}, [] as Row[]);
 }

@@ -1,8 +1,17 @@
 import { Row } from '../pdf2array';
 
 export interface StripFootersOptions {
+	/**
+	 * @default 1
+	 */
 	yTolerance?: number;
+	/**
+	 * @default 1
+	 */
 	xTolerance?: number;
+	/**
+	 * @default 0.5
+	 */
 	confidence?: number;
 }
 

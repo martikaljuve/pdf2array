@@ -1,5 +1,7 @@
-import { pdf2array, Pdf2ArrayOptions } from './pdf2array';
+import { stripFooters } from './filters/footers';
+import { applySlice } from './filters/slice';
+import { stripSuperscripts } from './filters/superscript';
 
-export { pdf2array, Pdf2ArrayOptions };
-
-export default pdf2array;
+export * from './pdf2array';
+export { stripFooters, stripSuperscripts, applySlice };
+export { pdf2array as default } from './pdf2array';

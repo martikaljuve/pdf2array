@@ -1,7 +1,7 @@
-import { TextItem } from 'unpdf/types/src/display/api';
+import type { DocumentInitParameters, TextItem } from 'unpdf/types/src/display/api';
 import { stripFooters, StripFootersOptions } from './filters/footers';
 import { stripSuperscripts, StripSuperscriptOptions } from './filters/superscript';
-import { applySlice, SliceOptions } from './filters/slice';
+import { applySlice, ApplySliceOptions } from './filters/slice';
 import { getDocumentProxy } from 'unpdf';
 
 export type TextItemWithPosition = TextItem & {
@@ -17,11 +17,15 @@ export interface Row {
 	items: TextItemWithPosition[];
 }
 
+export interface GetRowsOptions {
+	pages?: number[];
+}
+
 export interface Pdf2ArrayOptions {
 	pages?: number[];
 	stripFooters?: boolean | StripFootersOptions;
 	stripSuperscript?: boolean | StripSuperscriptOptions;
-	slice?: boolean | SliceOptions;
+	slice?: boolean | ApplySliceOptions;
 }
 
 /**
@@ -41,17 +45,7 @@ function _transform(x: number, y: number, transform: number[]) {
 	return [xt, yt];
 }
 
-/**
- * Loads a PDF file and returns text values arranged into a
- * 2d array.
- *
- * @param data
- * @param options
- */
-export async function pdf2array(
-	data: ArrayBuffer,
-	options?: Pdf2ArrayOptions,
-): Promise<string[][]> {
+export async function getRows(data: DocumentInitParameters['data'], options?: GetRowsOptions) {
 	const doc = await getDocumentProxy(data);
 
 	let rows: Row[] = [];
@@ -95,10 +89,15 @@ export async function pdf2array(
 
 		// Sort the items by x and y positions
 		items.sort((a, b) => {
-			if (a.y >= b.y + yTolerance) return -1;
-			if (a.y < b.y - yTolerance) return 1;
-			if (a.x < b.x) return -1;
-			if (a.x > b.x) return 1;
+			if (a.y >= b.y + yTolerance) {
+				return -1;
+			} else if (a.y < b.y - yTolerance) {
+				return 1;
+			} else if (a.x < b.x) {
+				return -1;
+			} else if (a.x > b.x) {
+				return 1;
+			}
 			return 0;
 		});
 
@@ -137,6 +136,28 @@ export async function pdf2array(
 		rows.push(currentRow);
 	}
 
+	return rows;
+}
+
+export function rowsToStrings(rows: Row[]) {
+	return rows.map((row) => {
+		return row.items.map((item) => item.str);
+	});
+}
+
+/**
+ * Loads a PDF file and returns text values arranged into a
+ * 2d array.
+ *
+ * @param data
+ * @param options
+ */
+export async function pdf2array(
+	data: DocumentInitParameters['data'],
+	options?: Pdf2ArrayOptions,
+): Promise<string[][]> {
+	let rows = await getRows(data, options);
+
 	// Apply any filters
 	if (!!options?.stripFooters) {
 		rows = stripFooters(
@@ -156,7 +177,5 @@ export async function pdf2array(
 		rows = applySlice(rows, typeof options.slice === 'boolean' ? undefined : options.slice);
 	}
 
-	return rows.map((row) => {
-		return row.items.map((item) => item.str);
-	});
+	return rowsToStrings(rows);
 }

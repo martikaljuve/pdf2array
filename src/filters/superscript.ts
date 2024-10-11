@@ -5,19 +5,23 @@ export interface StripSuperscriptOptions {
 	/**
 	 * distance to look from an item for the top corners of another item,
 	 * as a fraction of the height of the item being inspected.
+	 * @default 0.5
 	 */
 	radiusScale?: number;
 	/**
 	 * Only items smaller than the main text times this tolerance will be assumed to be
 	 * superscript. Set to 1 if superscript is the same size as the main text.
+	 * @default 0.75
 	 */
 	heightScale?: number;
 	/**
 	 * Strip superscripts that are to the left of the main text
+	 * @default true
 	 */
 	stripLeft?: boolean;
 	/**
 	 * Strip superscripts that are to the right of the main text
+	 * @default true
 	 */
 	stripRight?: boolean;
 }
