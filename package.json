@@ -15,7 +15,7 @@
     "lint": "prettier --check ."
   },
   "engines": {
-    "node": ">=22"
+    "node": ">=20"
   },
   "dependencies": {
     "kdtree-ts": "https://github.com/tonyroberts/kdtree-ts",

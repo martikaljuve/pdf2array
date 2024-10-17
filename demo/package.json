@@ -3,20 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "homepage": "https://tonyroberts.github.io/pdf2array",
-  "dependencies": {
-    "@types/node": "^16.18.4",
-    "@types/react": "^18.0.26",
-    "@types/react-dom": "^18.0.9",
-    "immer": "^9.0.16",
-    "pdf2array": "file:..",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1",
-    "typescript": "^5.6.3"
-  },
+  "type": "module",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   },
@@ -26,20 +17,20 @@
       "react-app/jest"
     ]
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "dependencies": {
+    "immer": "^10.1.1",
+    "pdf2array": "file:..",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "gh-pages": "^4.0.0",
-    "sass": "^1.56.1"
+    "@types/node": "^22.7.5",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.2",
+    "gh-pages": "^6.2.0",
+    "typescript": "^5.6.3",
+    "unpdf": "^0.12.1",
+    "vite": "^5.4.8"
   }
 }

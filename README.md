@@ -1,38 +1,41 @@
 > [!NOTE]
+> This project is a fork of https://github.com/tonyroberts/pdf2array.
+>
 > Changes in fork:
 >
 > -   Using [unpdf](https://github.com/unjs/unpdf) instead of [pdfjs-dist](https://www.npmjs.com/package/pdfjs-dist).
 > -   Exposed separate functions for getting rows, stripping footers/subscripts and applying SLICE algorithm.
 
--   [pdf2array](#pdf2array)
-    -   [API](#api)
-        -   [pdf2array(data, options)](#pdf2arraydata-options)
-        -   [getRows(data, options)](#getrowsdata-options)
-        -   [stripFooters(rows, options)](#stripfootersrows-options)
-        -   [stripSuperscript(rows, options)](#stripsuperscriptrows-options)
-        -   [applySlice(rows, options)](#applyslicerows-options)
-        -   [rowsToStrings(rows)](#rowstostringsrows)
-        -   [Other types](#other-types)
-            -   [Pdf2ArrayOptions](#pdf2arrayoptions)
-            -   [GetRowsOptions](#getrowsoptions)
-            -   [StripFootersOptions](#stripfootersoptions)
-            -   [StripSuperscriptOptions](#stripsuperscriptoptions)
-            -   [ApplySliceOptions](#applysliceoptions)
-            -   [TextItemWithPosition](#textitemwithposition)
-            -   [Row](#row)
-    -   [Contribution](#contribution)
-    -   [License](#license)
-    -   [Support](#support)
+# pdf2array (fork) <!-- omit in toc -->
 
-# pdf2array
-
-[![Tests](https://github.com/tonyroberts/pdf2array/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/tonyroberts/pdf2array/actions/workflows/tests.yml)
+[![Tests](https://github.com/martikaljuve/pdf2array/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/martikaljuve/pdf2array/actions/workflows/tests.yml)
 
 pdf2array is a Typescript package that loads PDF files and extracts text as a tabular array of values.
 
 It uses [pdf.js](https://github.com/mozilla/pdf.js/) and is intended to make extracting tabular data from PDF files simpler.
 
 For example usage see the [online demo](https://tonyroberts.github.io/pdf2array/).
+
+**Table of Contents**
+
+-   [API](#api)
+    -   [pdf2array(data, options)](#pdf2arraydata-options)
+    -   [getRows(data, options)](#getrowsdata-options)
+    -   [stripFooters(rows, options)](#stripfootersrows-options)
+    -   [stripSuperscript(rows, options)](#stripsuperscriptrows-options)
+    -   [applySlice(rows, options)](#applyslicerows-options)
+    -   [rowsToStrings(rows)](#rowstostringsrows)
+    -   [Types](#types)
+        -   [Pdf2ArrayOptions](#pdf2arrayoptions)
+        -   [GetRowsOptions](#getrowsoptions)
+        -   [StripFootersOptions](#stripfootersoptions)
+        -   [StripSuperscriptOptions](#stripsuperscriptoptions)
+        -   [ApplySliceOptions](#applysliceoptions)
+        -   [TextItemWithPosition](#textitemwithposition)
+        -   [Row](#row)
+-   [Contribution](#contribution)
+-   [License](#license)
+-   [Support](#support)
 
 ## API
 
@@ -51,11 +54,31 @@ async function pdf2array(
 
 Example:
 
+Node:
+
+```ts
+import * as fs from 'fs';
+import pdf2array from 'pdf2array';
+
+// NodeJS
+const file = fs.readFileSync(/*...*/);
+const data = new Uint8Array(file);
+const result = await pdf2array(data);
+```
+
+Web:
+
 ```ts
 import pdf2array from 'pdf2array';
 
-const file = /* fs.readFileSync(...) or File() */;
-const data = await pdf2array(file);
+// File
+const file = /* File() */;
+const buffer = await file.arrayBuffer();
+
+// Fetch
+// const buffer = await fetch(...).then(r => r.arrayBuffer());
+
+const result = await pdf2array(buffer);
 ```
 
 ### getRows(data, options)
@@ -75,7 +98,8 @@ Example:
 import { getRows, rowsToStrings } from 'pdf2array';
 
 const file = /* fs.readFileSync(...) or File() */;
-const rows = await getRows(file);
+const data = new Uint8Array(file);
+const rows = await getRows(data);
 const data = rowsToStrings(rows);
 ```
 
@@ -90,10 +114,12 @@ function stripFooters(rows: Row[], options?: StripFootersOptions): Row[];
 Example:
 
 ```ts
+import * as fs from 'fs';
 import { getRows, stripFooters, rowsToStrings } from 'pdf2array';
 
-const file = /* fs.readFileSync(...) or File() */;
-let rows = await getRows(file);
+const file = fs.readFileSync(/*...*/);
+const data = new Uint8Array(file);
+let rows = await getRows(data);
 rows = stripFooters(rows);
 const data = rowsToStrings(rows);
 ```
@@ -112,7 +138,8 @@ Example:
 import { getRows, stripSuperscript, rowsToStrings } from 'pdf2array';
 
 const file = /* fs.readFileSync(...) or File() */;
-let rows = await getRows(file);
+const data = new Uint8Array(file);
+let rows = await getRows(data);
 rows = stripSuperscript(rows);
 const data = rowsToStrings(rows);
 ```
@@ -131,7 +158,8 @@ Example:
 import { getRows, applySlice, rowsToStrings } from 'pdf2array';
 
 const file = /* fs.readFileSync(...) or File() */;
-let rows = await getRows(file);
+const data = new Uint8Array(file);
+let rows = await getRows(data);
 rows = applySlice(rows);
 const data = rowsToStrings(rows);
 ```
@@ -150,11 +178,12 @@ Example:
 import { getRows, rowsToStrings } from 'pdf2array';
 
 const file = /* fs.readFileSync(...) or File() */;
-let rows = await getRows(file);
+const data = new Uint8Array(file);
+let rows = await getRows(data);
 const data = rowsToStrings(rows);
 ```
 
-### Other types
+### Types
 
 #### Pdf2ArrayOptions
 
@@ -253,9 +282,9 @@ interface Row {
 
 This is a hobby project and your contributions are welcome.
 
-If you would like to support this project please consider buying me a coffee.
+If you would like to support this project please consider buying Tony a coffee.
 
-<a href="https://www.buymeacoffee.com/tonyroberts" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
+<a href="https://www.buymeacoffee.com/tonyroberts" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Tony A Coffee" height="41" width="174"></a>
 
 ## License
 

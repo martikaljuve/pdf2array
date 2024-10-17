@@ -1,24 +1,24 @@
-import './Demo.scss';
+import './Demo.css';
 
 import { pdf2array, Pdf2ArrayOptions } from 'pdf2array';
-import React, { ChangeEvent } from 'react';
-import produce from 'immer';
-import { getResolvedPDFJS } from 'unpdf';
+import { ChangeEvent, useEffect, useState } from 'react';
+import { produce } from 'immer';
+// import { configureUnPDF, getResolvedPDFJS } from 'unpdf';
 
 // configureUnPDF({
-//     pdfjs: () => import("pdfjs-dist"),
+// 	pdfjs: () => import('unpdf/pdfjs'),
 // });
 
-const pdfjs = await getResolvedPDFJS();
+// const pdfjs = await getResolvedPDFJS();
 
-// Set up the worker for pdfs
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+// // Set up the worker for pdfs
+// pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-const Demo: React.FC = () => {
-	const [file, setFile] = React.useState<File | undefined>();
-	const [options, setOptions] = React.useState<Pdf2ArrayOptions>({});
-	const [data, setData] = React.useState<string[][] | undefined>();
-	const [error, setError] = React.useState<string | undefined>();
+export function Demo() {
+	const [file, setFile] = useState<File | undefined>();
+	const [options, setOptions] = useState<Pdf2ArrayOptions>({});
+	const [data, setData] = useState<string[][] | undefined>();
+	const [error, setError] = useState<string | undefined>();
 
 	// Set the file state when the selected file is changed by the user
 	const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -59,7 +59,7 @@ const Demo: React.FC = () => {
 	};
 
 	// When the file changes load the data and convert to an array using pdf2array
-	React.useEffect(() => {
+	useEffect(() => {
 		let mounted = true;
 
 		(async () => {
@@ -91,7 +91,7 @@ const Demo: React.FC = () => {
 
 			<div>
 				Load a PDF file below to convert it into an array using{' '}
-				<a href="https://github.com/tonyroberts/pdf2array">pdf2array</a>.
+				<a href={import.meta.env.REPOSITORY_URL}>pdf2array</a>.
 			</div>
 
 			<form>
@@ -171,6 +171,4 @@ const Demo: React.FC = () => {
 			})()}
 		</div>
 	);
-};
-
-export default Demo;
+}
