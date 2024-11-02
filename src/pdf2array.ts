@@ -19,6 +19,7 @@ export interface Row {
 
 export interface GetRowsOptions {
 	pages?: number[];
+	yTolerance?: number;
 }
 
 export interface Pdf2ArrayOptions {
@@ -27,6 +28,8 @@ export interface Pdf2ArrayOptions {
 	stripSuperscript?: boolean | StripSuperscriptOptions;
 	slice?: boolean | ApplySliceOptions;
 }
+
+export type DataType = DocumentInitParameters['data'];
 
 /**
  * Transform an (x, y) coordinate by a pdf transformation matrix.
@@ -45,7 +48,7 @@ function _transform(x: number, y: number, transform: number[]) {
 	return [xt, yt];
 }
 
-export async function getRows(data: DocumentInitParameters['data'], options?: GetRowsOptions) {
+export async function getRows(data: DataType, options?: GetRowsOptions) {
 	const doc = await getDocumentProxy(data);
 
 	let rows: Row[] = [];
@@ -82,10 +85,13 @@ export async function getRows(data: DocumentInitParameters['data'], options?: Ge
 			continue;
 		}
 
-		// Find the minimum height of any element. We will use this to determine the
-		// tolerance for deciding if two items are on the same line or not.
-		const minHeight = Math.max(Math.min(...items.map((item) => item.height)), 0.001);
-		const yTolerance = minHeight / 2;
+		let yTolerance = options?.yTolerance;
+		if (!yTolerance) {
+			// Find the minimum height of any element. We will use this to determine the
+			// tolerance for deciding if two items are on the same line or not.
+			const minHeight = Math.max(Math.min(...items.map((item) => item.height)), 0.001);
+			yTolerance = minHeight / 2;
+		}
 
 		// Sort the items by x and y positions
 		items.sort((a, b) => {
