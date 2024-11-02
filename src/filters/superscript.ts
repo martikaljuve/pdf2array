@@ -1,5 +1,5 @@
-import { Row } from '../pdf2array';
 import { KDTree } from 'kdtree-ts';
+import { Row } from '../types';
 
 export interface StripSuperscriptOptions {
 	/**

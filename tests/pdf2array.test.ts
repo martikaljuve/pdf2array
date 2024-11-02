@@ -1,33 +1,34 @@
-import * as fs from 'fs';
+import * as fs from 'fs/promises';
 import * as path from 'path';
+import { getDocument } from 'pdfjs-dist';
 import { fileURLToPath } from 'url';
+
 import pdf2array from '../src/index';
-// import { configureUnPDF } from "unpdf";
 
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
 const __dirname = path.dirname(__filename);
 
-// configureUnPDF({
-//     pdfjs: () => import("pdfjs-dist"),
-// });
-
 describe('pdf2array', () => {
 	it('should read a pdf file into an array', async () => {
-		const data = fs.readFileSync(path.resolve(__dirname, './file-sample_150kB.pdf'));
+		const data = await fs.readFile(path.resolve(__dirname, './file-sample_150kB.pdf'));
 		expect(data).not.toBeNull();
 
-		const array = await pdf2array(new Uint8Array(data));
+		const doc = await getDocument(data).promise;
+
+		const array = await pdf2array(doc);
 		expect(array).not.toBeNull();
 		expect(array.length).toEqual(97);
 		expect(array[43]).toEqual(['Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum']);
 	});
 
 	it('should strip footers', async () => {
-		const data = fs.readFileSync(path.resolve(__dirname, './with_footer.pdf'));
+		const data = await fs.readFile(path.resolve(__dirname, './with_footer.pdf'));
 		expect(data).not.toBeNull();
 
+		const doc = await getDocument(data).promise;
+
 		// With footers first
-		const withFooters = await pdf2array(new Uint8Array(data), {
+		const withFooters = await pdf2array(doc, {
 			stripFooters: false,
 		});
 
@@ -39,7 +40,7 @@ describe('pdf2array', () => {
 		]);
 
 		// Now without footers
-		const withoutFooters = await pdf2array(new Uint8Array(data), {
+		const withoutFooters = await pdf2array(doc, {
 			stripFooters: true,
 		});
 
@@ -48,11 +49,13 @@ describe('pdf2array', () => {
 	});
 
 	it('should strip superscript', async () => {
-		const data = fs.readFileSync(path.resolve(__dirname, './with_footnote.pdf'));
+		const data = await fs.readFile(path.resolve(__dirname, './with_footnote.pdf'));
 		expect(data).not.toBeNull();
 
+		const doc = await getDocument(data).promise;
+
 		// With superscript first
-		const withSuperscript = await pdf2array(new Uint8Array(data), {
+		const withSuperscript = await pdf2array(doc, {
 			stripSuperscript: false,
 		});
 
@@ -60,7 +63,7 @@ describe('pdf2array', () => {
 		expect(withSuperscript[0]).toEqual(['1', '2']);
 
 		// Without superscript
-		const withoutSuperscript = await pdf2array(new Uint8Array(data), {
+		const withoutSuperscript = await pdf2array(doc, {
 			stripSuperscript: true,
 		});
 

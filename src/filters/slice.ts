@@ -1,4 +1,4 @@
-import { Row, TextItemWithPosition } from '../pdf2array';
+import { Row, TextItemWithPosition } from '../types';
 
 export interface ApplySliceOptions {
 	/**

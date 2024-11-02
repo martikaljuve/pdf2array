@@ -18,16 +18,24 @@
     "node": ">=20"
   },
   "dependencies": {
-    "kdtree-ts": "https://github.com/tonyroberts/kdtree-ts",
-    "unpdf": "^0.12.1"
+    "kdtree-ts": "https://github.com/tonyroberts/kdtree-ts"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.13",
+    "@types/jest": "^29.5.14",
     "jest": "^29.7.0",
+    "pdfjs-dist": "^4.7.76",
     "prettier": "^3.3.3",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
-    "tsup": "^8.3.0",
+    "tsup": "^8.3.5",
     "typescript": "^5.6.3"
+  },
+  "peerDependencies": {
+    "pdfjs-dist": "^4.7.76"
+  },
+  "peerDependenciesMeta": {
+    "pdfjs-dist": {
+      "optional": true
+    }
   }
 }

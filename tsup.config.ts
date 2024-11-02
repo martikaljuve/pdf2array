@@ -5,5 +5,7 @@ export default defineConfig({
 	format: ['cjs', 'esm'],
 	target: ['node20', 'es2020'],
 	clean: true,
-	dts: true,
+	dts: {
+		resolve: true,
+	},
 });

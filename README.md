@@ -3,7 +3,8 @@
 >
 > Changes in fork:
 >
-> -   Using [unpdf](https://github.com/unjs/unpdf) instead of [pdfjs-dist](https://www.npmjs.com/package/pdfjs-dist).
+> -   Changed main function to accept pdf.js `PDFDocumentProxy` as first argument.
+> -   Changed pdfjs-dist to peerDependency.
 > -   Exposed separate functions for getting rows, stripping footers/subscripts and applying SLICE algorithm.
 
 # pdf2array (fork) <!-- omit in toc -->
@@ -19,8 +20,8 @@ For example usage see the [online demo](https://tonyroberts.github.io/pdf2array/
 **Table of Contents**
 
 -   [API](#api)
-    -   [pdf2array(data, options)](#pdf2arraydata-options)
-    -   [getRows(data, options)](#getrowsdata-options)
+    -   [pdf2array(doc, options)](#pdf2arraydoc-options)
+    -   [getRows(doc, options)](#getrowsdoc-options)
     -   [stripFooters(rows, options)](#stripfootersrows-options)
     -   [stripSuperscript(rows, options)](#stripsuperscriptrows-options)
     -   [applySlice(rows, options)](#applyslicerows-options)
@@ -39,17 +40,16 @@ For example usage see the [online demo](https://tonyroberts.github.io/pdf2array/
 
 ## API
 
-### pdf2array(data, options)
+### pdf2array(doc, options)
 
-Main function. Calls [getRows](#getrowsdata-options), any filters ([stripFooters](#stripfootersrows-options)/[stripSuperscript](#stripsuperscriptrows-options)/[applySlice](#applyslicerows-options)), then [rowsToStrings](#rowstostringsrows).
+Main function.
+
+Calls [getRows](#getrowsdata-options), any filters ([stripFooters](#stripfootersrows-options)/[stripSuperscript](#stripsuperscriptrows-options)/[applySlice](#applyslicerows-options)), then [rowsToStrings](#rowstostringsrows).
 
 Options: [Pdf2ArrayOptions](#pdf2arrayoptions).
 
 ```ts
-async function pdf2array(
-	data: string | number[] | ArrayBuffer | TypedArray | undefined,
-	options?: Pdf2ArrayOptions,
-): Promise<string[][]>;
+async function pdf2array(doc: PDFDocumentProxy, options?: Pdf2ArrayOptions): Promise<string[][]>;
 ```
 
 Example:
@@ -57,50 +57,31 @@ Example:
 Node:
 
 ```ts
-import * as fs from 'fs';
 import pdf2array from 'pdf2array';
+import { getDocument } from 'pdfjs-dist';
 
-// NodeJS
-const file = fs.readFileSync(/*...*/);
-const data = new Uint8Array(file);
-const result = await pdf2array(data);
+const doc = await getDocument(/*...*/).promise;
+
+const result = await pdf2array(doc);
 ```
 
-Web:
-
-```ts
-import pdf2array from 'pdf2array';
-
-// File
-const file = /* File() */;
-const buffer = await file.arrayBuffer();
-
-// Fetch
-// const buffer = await fetch(...).then(r => r.arrayBuffer());
-
-const result = await pdf2array(buffer);
-```
-
-### getRows(data, options)
+### getRows(doc, options)
 
 Options: [GetRowsOptions](#getrowsoptions).
 
 ```ts
-async function getRows(
-	data: string | number[] | ArrayBuffer | TypedArray | undefined,
-	options?: GetRowsOptions,
-): Promise<Row[]>;
+async function getRows(doc: PDFDocumentProxy, options?: GetRowsOptions): Promise<Row[]>;
 ```
 
 Example:
 
 ```ts
 import { getRows, rowsToStrings } from 'pdf2array';
+import { getDocument } from 'pdfjs-dist';
 
-const file = /* fs.readFileSync(...) or File() */;
-const data = new Uint8Array(file);
-const rows = await getRows(data);
-const data = rowsToStrings(rows);
+const doc = await getDocument(/*...*/).promise;
+const rows = await getRows(doc);
+const strings = rowsToStrings(rows);
 ```
 
 ### stripFooters(rows, options)
@@ -114,12 +95,11 @@ function stripFooters(rows: Row[], options?: StripFootersOptions): Row[];
 Example:
 
 ```ts
-import * as fs from 'fs';
 import { getRows, stripFooters, rowsToStrings } from 'pdf2array';
+import { getDocument } from 'pdfjs-dist';
 
-const file = fs.readFileSync(/*...*/);
-const data = new Uint8Array(file);
-let rows = await getRows(data);
+const doc = await getDocument(/*...*/).promise;
+let rows = await getRows(doc);
 rows = stripFooters(rows);
 const data = rowsToStrings(rows);
 ```
@@ -136,10 +116,10 @@ Example:
 
 ```ts
 import { getRows, stripSuperscript, rowsToStrings } from 'pdf2array';
+import { getDocument } from 'pdfjs-dist';
 
-const file = /* fs.readFileSync(...) or File() */;
-const data = new Uint8Array(file);
-let rows = await getRows(data);
+const doc = await getDocument(/*...*/).promise;
+let rows = await getRows(doc);
 rows = stripSuperscript(rows);
 const data = rowsToStrings(rows);
 ```
@@ -156,10 +136,10 @@ Example:
 
 ```ts
 import { getRows, applySlice, rowsToStrings } from 'pdf2array';
+import { getDocument } from 'pdfjs-dist';
 
-const file = /* fs.readFileSync(...) or File() */;
-const data = new Uint8Array(file);
-let rows = await getRows(data);
+const doc = await getDocument(/*...*/).promise;
+let rows = await getRows(doc);
 rows = applySlice(rows);
 const data = rowsToStrings(rows);
 ```
@@ -176,10 +156,10 @@ Example:
 
 ```ts
 import { getRows, rowsToStrings } from 'pdf2array';
+import { getDocument } from 'pdfjs-dist';
 
-const file = /* fs.readFileSync(...) or File() */;
-const data = new Uint8Array(file);
-let rows = await getRows(data);
+const doc = await getDocument(/*...*/).promise;
+let rows = await getRows(doc);
 const data = rowsToStrings(rows);
 ```
 
@@ -193,6 +173,7 @@ interface Pdf2ArrayOptions {
 	stripFooters?: boolean | StripFootersOptions;
 	stripSuperscript?: boolean | StripSuperscriptOptions;
 	slice?: boolean | SliceOptions;
+	yTolerance?: number;
 }
 ```
 
@@ -201,6 +182,7 @@ interface Pdf2ArrayOptions {
 ```ts
 interface GetRowsOptions {
 	pages?: number[];
+	yTolerance?: number;
 }
 ```
 

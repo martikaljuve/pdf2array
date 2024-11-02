@@ -3,16 +3,10 @@ import './Demo.css';
 import { pdf2array, Pdf2ArrayOptions } from 'pdf2array';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { produce } from 'immer';
-// import { configureUnPDF, getResolvedPDFJS } from 'unpdf';
+import { getDocument, GlobalWorkerOptions, version } from 'pdfjs-dist';
 
-// configureUnPDF({
-// 	pdfjs: () => import('unpdf/pdfjs'),
-// });
-
-// const pdfjs = await getResolvedPDFJS();
-
-// // Set up the worker for pdfs
-// pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+// Set up the worker for pdfs
+GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${version}/pdf.worker.min.mjs`;
 
 export function Demo() {
 	const [file, setFile] = useState<File | undefined>();
@@ -58,6 +52,14 @@ export function Demo() {
 		);
 	};
 
+	function handleSetYTolerance(event: ChangeEvent<HTMLInputElement>) {
+		setOptions(
+			produce((draft) => {
+				draft.yTolerance = event.target?.valueAsNumber;
+			}),
+		);
+	}
+
 	// When the file changes load the data and convert to an array using pdf2array
 	useEffect(() => {
 		let mounted = true;
@@ -66,7 +68,8 @@ export function Demo() {
 			if (!!file) {
 				try {
 					const buffer = await file.arrayBuffer();
-					const data = await pdf2array(buffer, options);
+					const doc = await getDocument(buffer).promise;
+					const data = await pdf2array(doc, options);
 
 					if (mounted) {
 						setData(data);
@@ -138,6 +141,17 @@ export function Demo() {
 							onChange={handleSetSlice}
 						/>
 						<label htmlFor={'slice-checkbox'}>SLICE</label>
+					</div>
+					<div>
+						<label>
+							yTolerance{' '}
+							<input
+								id="y-tolerance"
+								type="number"
+								value={options.yTolerance}
+								onChange={handleSetYTolerance}
+							/>
+						</label>
 					</div>
 				</div>
 			</form>

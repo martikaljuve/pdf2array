@@ -1,35 +1,7 @@
-import type { DocumentInitParameters, TextItem } from 'unpdf/types/src/display/api';
 import { stripFooters, StripFootersOptions } from './filters/footers';
 import { stripSuperscripts, StripSuperscriptOptions } from './filters/superscript';
 import { applySlice, ApplySliceOptions } from './filters/slice';
-import { getDocumentProxy } from 'unpdf';
-
-export type TextItemWithPosition = TextItem & {
-	x: number;
-	y: number;
-};
-
-export interface Row {
-	page: number;
-	rowNumber: number;
-	y: number;
-	xs: number[];
-	items: TextItemWithPosition[];
-}
-
-export interface GetRowsOptions {
-	pages?: number[];
-	yTolerance?: number;
-}
-
-export interface Pdf2ArrayOptions {
-	pages?: number[];
-	stripFooters?: boolean | StripFootersOptions;
-	stripSuperscript?: boolean | StripSuperscriptOptions;
-	slice?: boolean | ApplySliceOptions;
-}
-
-export type DataType = DocumentInitParameters['data'];
+import { PDFDocumentProxyLike, Row, TextItem, TextItemWithPosition } from './types';
 
 /**
  * Transform an (x, y) coordinate by a pdf transformation matrix.
@@ -48,9 +20,12 @@ function _transform(x: number, y: number, transform: number[]) {
 	return [xt, yt];
 }
 
-export async function getRows(data: DataType, options?: GetRowsOptions) {
-	const doc = await getDocumentProxy(data);
+export interface GetRowsOptions {
+	pages?: number[];
+	yTolerance?: number;
+}
 
+export async function getRows(doc: PDFDocumentProxyLike, options?: GetRowsOptions) {
 	let rows: Row[] = [];
 	let currentRow: Row = undefined;
 
@@ -151,18 +126,26 @@ export function rowsToStrings(rows: Row[]) {
 	});
 }
 
+export interface Pdf2ArrayOptions {
+	pages?: number[];
+	stripFooters?: boolean | StripFootersOptions;
+	stripSuperscript?: boolean | StripSuperscriptOptions;
+	slice?: boolean | ApplySliceOptions;
+	yTolerance?: number;
+}
+
 /**
  * Loads a PDF file and returns text values arranged into a
  * 2d array.
  *
- * @param data
+ * @param doc
  * @param options
  */
 export async function pdf2array(
-	data: DocumentInitParameters['data'],
+	doc: PDFDocumentProxyLike,
 	options?: Pdf2ArrayOptions,
 ): Promise<string[][]> {
-	let rows = await getRows(data, options);
+	let rows = await getRows(doc, options);
 
 	// Apply any filters
 	if (!!options?.stripFooters) {

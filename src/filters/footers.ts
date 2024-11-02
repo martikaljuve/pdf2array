@@ -1,4 +1,4 @@
-import { Row } from '../pdf2array';
+import { Row } from '../types';
 
 export interface StripFootersOptions {
 	/**

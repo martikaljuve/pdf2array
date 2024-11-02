@@ -20,6 +20,7 @@
   "dependencies": {
     "immer": "^10.1.1",
     "pdf2array": "file:..",
+    "pdfjs-dist": "^4.7.76",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
@@ -30,7 +31,6 @@
     "@vitejs/plugin-react": "^4.3.2",
     "gh-pages": "^6.2.0",
     "typescript": "^5.6.3",
-    "unpdf": "^0.12.1",
     "vite": "^5.4.8"
   }
 }
