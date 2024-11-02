@@ -3,7 +3,7 @@ import './Demo.css';
 import { pdf2array, Pdf2ArrayOptions } from 'pdf2array';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { produce } from 'immer';
-import { getDocument, GlobalWorkerOptions, version } from 'pdfjs-dist';
+import { getDocument, GlobalWorkerOptions, PDFDocumentProxy, version } from 'pdfjs-dist';
 
 // Set up the worker for pdfs
 GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${version}/pdf.worker.min.mjs`;
@@ -13,6 +13,7 @@ export function Demo() {
 	const [options, setOptions] = useState<Pdf2ArrayOptions>({});
 	const [data, setData] = useState<string[][] | undefined>();
 	const [error, setError] = useState<string | undefined>();
+	const [doc, setDoc] = useState<PDFDocumentProxy | undefined>();
 
 	// Set the file state when the selected file is changed by the user
 	const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -55,30 +56,42 @@ export function Demo() {
 	function handleSetYTolerance(event: ChangeEvent<HTMLInputElement>) {
 		setOptions(
 			produce((draft) => {
-				draft.yTolerance = event.target?.valueAsNumber;
+				const value = event.target?.valueAsNumber;
+				draft.yTolerance = isNaN(value) ? undefined : value;
 			}),
 		);
 	}
 
-	// When the file changes load the data and convert to an array using pdf2array
+	useEffect(() => {
+		(async () => {
+			if (!file) {
+				return;
+			}
+
+			const buffer = await file.arrayBuffer();
+			const doc = await getDocument(buffer).promise;
+			setDoc(doc);
+		})();
+	}, [file]);
+
 	useEffect(() => {
 		let mounted = true;
 
 		(async () => {
-			if (!!file) {
-				try {
-					const buffer = await file.arrayBuffer();
-					const doc = await getDocument(buffer).promise;
-					const data = await pdf2array(doc, options);
+			if (!doc) {
+				return;
+			}
 
-					if (mounted) {
-						setData(data);
-					}
-				} catch (e: any) {
-					console.error(e);
-					if (mounted) {
-						setError(e.message);
-					}
+			try {
+				const data = await pdf2array(doc, options);
+
+				if (mounted) {
+					setData(data);
+				}
+			} catch (e: any) {
+				console.error(e);
+				if (mounted) {
+					setError(e.message);
 				}
 			}
 		})();
@@ -86,7 +99,7 @@ export function Demo() {
 		return () => {
 			mounted = false;
 		};
-	}, [file, options, setData, setError]);
+	}, [doc, options, setData, setError]);
 
 	return (
 		<div className="demo">
@@ -98,49 +111,57 @@ export function Demo() {
 			</div>
 
 			<form>
-				<div className={'options'}>
+				<div className="options">
 					<div>
 						<input
-							type={'file'}
+							type="file"
 							accept=".pdf, application/pdf"
 							onChange={handleFileChange}
 						/>
 					</div>
 					<div>
-						<label htmlFor={'page-input'}>Page</label>
-						<input
-							id={'page-input'}
-							type={'number'}
-							value={(options.pages ? options.pages[0] : '') ?? ''}
-							onChange={handleSetPage}
-						/>
+						<label>
+							Page{' '}
+							<input
+								id="page-input"
+								type="number"
+								value={(options.pages ? options.pages[0] : '') ?? ''}
+								onChange={handleSetPage}
+							/>
+						</label>
 					</div>
 					<div>
-						<input
-							id={'strip-footers-checkbox'}
-							type={'checkbox'}
-							checked={!!options.stripFooters}
-							onChange={handleStripFooters}
-						/>
-						<label htmlFor={'strip-footers-checkbox'}>Strip Footers</label>
+						<label>
+							<input
+								id="strip-footers-checkbox"
+								type="checkbox"
+								checked={!!options.stripFooters}
+								onChange={handleStripFooters}
+							/>{' '}
+							Strip Footers
+						</label>
 					</div>
 					<div>
-						<input
-							id={'strip-superscript-checkbox'}
-							type={'checkbox'}
-							checked={!!options.stripSuperscript}
-							onChange={handleStripSuperscript}
-						/>
-						<label htmlFor={'strip-superscript-checkbox'}>Strip Superscript</label>
+						<label>
+							<input
+								id="strip-superscript-checkbox"
+								type="checkbox"
+								checked={!!options.stripSuperscript}
+								onChange={handleStripSuperscript}
+							/>{' '}
+							Strip Superscript
+						</label>
 					</div>
 					<div>
-						<input
-							id={'slice-checkbox'}
-							type={'checkbox'}
-							checked={!!options.slice}
-							onChange={handleSetSlice}
-						/>
-						<label htmlFor={'slice-checkbox'}>SLICE</label>
+						<label>
+							<input
+								id="slice-checkbox"
+								type="checkbox"
+								checked={!!options.slice}
+								onChange={handleSetSlice}
+							/>{' '}
+							SLICE
+						</label>
 					</div>
 					<div>
 						<label>
@@ -148,7 +169,7 @@ export function Demo() {
 							<input
 								id="y-tolerance"
 								type="number"
-								value={options.yTolerance}
+								value={options.yTolerance ?? ''}
 								onChange={handleSetYTolerance}
 							/>
 						</label>
