@@ -7,9 +7,9 @@ export interface ApplySliceOptions {
 	verticalSlices?: number;
 }
 
-const DefaultSliceOptions: ApplySliceOptions = {
+const DefaultSliceOptions = {
 	verticalSlices: 1024,
-};
+} satisfies ApplySliceOptions;
 
 function _findLocalMinima(values: number[]) {
 	const result = new Array<number>();
@@ -162,7 +162,7 @@ export function applySlice(rows: Row[], options?: ApplySliceOptions) {
 			current.rows.push(row);
 			return prev;
 		},
-		[{ page: 0, rows: [] }],
+		[{ page: 0, rows: [] as Row[] }],
 	);
 
 	// Apply slice to each page independently

@@ -107,7 +107,7 @@ export function Demo() {
 
 			<div>
 				Load a PDF file below to convert it into an array using{' '}
-				<a href={import.meta.env.REPOSITORY_URL}>pdf2array</a>.
+				<a href={import.meta.env.VITE_REPOSITORY_URL}>pdf2array</a>.
 			</div>
 
 			<form>

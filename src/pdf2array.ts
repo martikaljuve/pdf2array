@@ -27,7 +27,7 @@ export interface GetRowsOptions {
 
 export async function getRows(doc: PDFDocumentProxyLike, options?: GetRowsOptions) {
 	let rows: Row[] = [];
-	let currentRow: Row = undefined;
+	let currentRow: Row | undefined = undefined;
 
 	for (let i = 0; i < doc.numPages; ++i) {
 		if (!!options?.pages && options.pages.findIndex((p) => p === i + 1) < 0) {

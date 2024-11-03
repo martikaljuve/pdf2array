@@ -1,5 +1,5 @@
 import { KDTree } from 'kdtree-ts';
-import { Row } from '../types';
+import { Row, TextItemWithPosition } from '../types';
 
 export interface StripSuperscriptOptions {
 	/**
@@ -26,12 +26,12 @@ export interface StripSuperscriptOptions {
 	stripRight?: boolean;
 }
 
-const DefaultOptions: StripSuperscriptOptions = {
+const DefaultOptions = {
 	radiusScale: 0.5,
 	heightScale: 0.75,
 	stripLeft: true,
 	stripRight: true,
-};
+} satisfies StripSuperscriptOptions;
 
 /**
  * Look for superscript bits of text and remove them.
@@ -61,7 +61,7 @@ export function stripSuperscripts(rows: Row[], options?: StripSuperscriptOptions
 			current.rows.push(row);
 			return prev;
 		},
-		[{ page: 0, rows: [] }],
+		[{ page: 0, rows: [] as Row[] }],
 	);
 
 	// Map of row -> items of subscript items
@@ -69,17 +69,24 @@ export function stripSuperscripts(rows: Row[], options?: StripSuperscriptOptions
 
 	for (let page of pages) {
 		// Build KD trees of the top corners of each text item on the page
-		const items = page.rows.reduce((prev, row) => {
-			return [
-				...prev,
-				...row.items.map((item, idx) => ({
-					page: row.page,
-					rowNumber: row.rowNumber,
-					itemNumber: idx,
-					...item,
-				})),
-			];
-		}, []);
+		const items = page.rows.reduce<
+			(TextItemWithPosition & {
+				page: number;
+				rowNumber: number;
+				itemNumber: number;
+			})[]
+		>(
+			(prev, row) =>
+				prev.concat(
+					row.items.map((item, idx) => ({
+						page: row.page,
+						rowNumber: row.rowNumber,
+						itemNumber: idx,
+						...item,
+					})),
+				),
+			[],
+		);
 
 		const topLeftTree = (() => {
 			if (stripLeft) {

@@ -15,11 +15,11 @@ export interface StripFootersOptions {
 	confidence?: number;
 }
 
-const DefaultFooterOptions: StripFootersOptions = {
+const DefaultFooterOptions = {
 	yTolerance: 1,
 	xTolerance: 1,
 	confidence: 0.5,
-};
+} satisfies StripFootersOptions;
 
 /**
  * Determine if two footer rows should be considered equivalent or not.
@@ -103,9 +103,9 @@ export function stripFooters(rows: Row[], options?: StripFootersOptions) {
 
 	// Create clusters of matching footers from the similarity matrix
 	const clusters: number[][] = []; // index[]
-	let largestCluster: [number, number] = undefined; // [index, size]
+	let largestCluster: [number, number] | undefined = undefined; // [index, size]
 	for (let i = 0; i < footers.length; ++i) {
-		let cluster: number[] = undefined;
+		let cluster: number[] | undefined = undefined;
 		for (let j = i + 1; j < footers.length; ++j) {
 			if (!!m[j][i]) {
 				cluster = !!cluster ? [...cluster, j] : [i, j];
